@@ -1,0 +1,55 @@
+{
+  "name": "delivery-manager",
+  "version": "1.0.0",
+  "description": "Delivery Order Desktop App",
+  "author": {
+    "name": "EliteFort",
+    "email": "contact@elitefort.net"
+  },
+  "homepage": "https://example.com",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "build:win": "electron-builder --win --x64"
+  },
+  "build": {
+    "appId": "com.delivery.manager",
+    "productName": "DeliveryManager",
+    "asar": true,
+    "asarUnpack": [
+      "*.php",
+      "index.html"
+    ],
+    "directories": {
+      "output": "dist"
+    },
+    "extraResources": [
+      {
+        "from": "bin/php",
+        "to": "bin/php",
+        "filter": ["**/*"]
+      }
+    ],
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": ["x64"]
+        },
+        {
+          "target": "dir",
+          "arch": ["x64"]
+        }
+      ]
+    },
+    "nsis": {
+      "oneClick": true,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": false
+    }
+  },
+  "devDependencies": {
+    "electron": "^30.0.0",
+    "electron-builder": "^24.13.3"
+  }
+}

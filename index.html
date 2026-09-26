@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Logro Elite</title>
+    <style>
+        :root {
+            --primary: #4f46e5;
+            --primary-hover: #4338ca;
+            --bg: #f8fafc;
+            --surface: #ffffff;
+            --surface-hover: #f1f5f9;
+            --table-header: #f1f5f9;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --success-bg: #dcfce7;
+            --success-text: #15803d;
+            --warning-bg: #fef9c3;
+            --warning-text: #854d0e;
+            --danger: #ef4444;
+            --modal-backdrop: rgba(15, 23, 42, 0.5);
+            --watermark-bg: rgba(255, 255, 255, 0.85);
+            --radius: 12px;
+            --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05);
+        }
+
+        /* Dark Theme Variables */
+        [data-theme="dark"] {
+            --primary: #6366f1;
+            --primary-hover: #4f46e5;
+            --bg: #0f172a;
+            --surface: #1e293b;
+            --surface-hover: #334155;
+            --table-header: #1e293b;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border: #334155;
+            --success-bg: #064e3b;
+            --success-text: #6ee7b7;
+            --warning-bg: #713f12;
+            --warning-text: #fde047;
+            --danger: #f87171;
+            --modal-backdrop: rgba(0, 0, 0, 0.7);
+            --watermark-bg: rgba(30, 41, 59, 0.85);
+            --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.3);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+        }
+
+        html, body {
+            height: 100%;
+            overflow: hidden; /* Disables outer window scrolling */
+            background-color: var(--bg);
+            color: var(--text-main);
+        }
+
+        .container {
+            max-width: 1250px;
+            height: 100vh;
+            margin: 0 auto;
+            padding: 1.5rem 1.5rem 0.5rem 1.5rem;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Fixed Top Header */
+        .header {
+            flex-shrink: 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.25rem;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .title h1 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+        }
+
+        .title p {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-top: 0.2rem;
+        }
+
+        .btn {
+            background: var(--primary);
+            color: #fff;
+            padding: 0.7rem 1.2rem;
+            border-radius: var(--radius);
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .btn:hover {
+            background: var(--primary-hover);
+        }
+
+        /* Theme Toggle Button */
+        .btn-theme {
+            background: var(--surface);
+            color: var(--text-main);
+            border: 1px solid var(--border);
+            padding: 0.65rem;
+            border-radius: var(--radius);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 42px;
+            height: 42px;
+        }
+
+        .btn-theme:hover {
+            background: var(--surface-hover);
+        }
+
+        /* Fixed Controls Bar */
+        .controls-card {
+            flex-shrink: 0;
+            background: var(--surface);
+            padding: 1rem 1.25rem;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .search-box {
+            flex: 1;
+        }
+
+        .input-control, .select-control {
+            width: 100%;
+            padding: 0.7rem 1rem;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            outline: none;
+            background: var(--surface);
+            color: var(--text-main);
+        }
+
+        .input-control:focus, .select-control:focus {
+            border-color: var(--primary);
+        }
+
+        /* Scrollable Table Container */
+        .table-container {
+            flex: 1;
+            overflow-y: auto;
+            background: var(--surface);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+            position: relative;
+            margin-bottom: 3.5rem; /* Room for watermark */
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
+
+        th {
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            background: var(--table-header);
+            color: var(--text-muted);
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            border-bottom: 2px solid var(--border);
+        }
+
+        th, td {
+            padding: 0.85rem 1.25rem;
+            border-bottom: 1px solid var(--border);
+            font-size: 0.9rem;
+        }
+
+        tr:hover td {
+            background-color: var(--surface-hover);
+        }
+
+        .badge {
+            padding: 0.35rem 0.75rem;
+            border-radius: 9999px;
+            font-weight: 600;
+            font-size: 0.75rem;
+            border: none;
+            cursor: pointer;
+            text-transform: capitalize;
+        }
+
+        .badge-pending {
+            background-color: var(--warning-bg);
+            color: var(--warning-text);
+        }
+
+        .badge-delivered {
+            background-color: var(--success-bg);
+            color: var(--success-text);
+        }
+
+        .actions {
+            display: flex;
+            gap: 0.5rem;
+            justify-content: flex-end;
+        }
+
+        .btn-action {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: 600;
+            padding: 0.3rem 0.6rem;
+            border-radius: 6px;
+        }
+
+        .btn-edit { color: var(--primary); }
+        .btn-delete { color: var(--danger); }
+
+        /* Modal Styles */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--modal-backdrop);
+            display: none;
+            place-items: center;
+            z-index: 999;
+            backdrop-filter: blur(4px);
+        }
+
+        .modal.active { display: grid; }
+
+        .modal-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            width: 100%;
+            max-width: 500px;
+            padding: 1.75rem;
+            box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.2);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .btn-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--text-muted);
+        }
+
+        .form-group {
+            margin-bottom: 1.2rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.4rem;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 0.75rem;
+            margin-top: 1.5rem;
+        }
+
+        .btn-cancel {
+            background: var(--border);
+            color: var(--text-main);
+        }
+
+        /* Floating Watermark Badge */
+        .app-watermark {
+            position: fixed;
+            bottom: 16px;
+            right: 20px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--watermark-bg);
+            backdrop-filter: blur(8px);
+            border: 1px solid var(--border);
+            padding: 6px 14px;
+            border-radius: 999px;
+            box-shadow: var(--shadow);
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            user-select: none;
+            z-index: 100;
+        }
+
+        .app-watermark:hover {
+            border-color: var(--primary);
+            transform: translateY(-1px);
+        }
+
+        .app-watermark strong {
+            font-weight: 700;
+        }
+
+        .app-watermark .dot {
+            width: 6px;
+            height: 6px;
+            background-color: #22c55e;
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        .app-watermark a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 700;
+        }
+
+        .app-watermark a:hover {
+            color: var(--primary-hover);
+            text-decoration: underline;
+        }
+
+        /* Scrollbar Styling */
+        .table-container::-webkit-scrollbar {
+            width: 8px;
+        }
+        .table-container::-webkit-scrollbar-track {
+            background: var(--surface);
+        }
+        .table-container::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <div class="title">
+            <h1>Delivery Management</h1>
+            <p>Real-time delivery orders dashboard</p>
+        </div>
+        <div class="header-actions">
+            <!-- Dark / Light Theme Toggle -->
+            <button class="btn-theme" id="themeToggleBtn" onclick="toggleTheme()" title="Toggle Theme">
+                <span id="themeIcon">🌙</span>
+            </button>
+            <button class="btn" onclick="openModal()">+ Add New Order</button>
+        </div>
+    </div>
+
+    <!-- Pinned Search & Filter Controls -->
+    <div class="controls-card">
+        <div class="search-box">
+            <input type="text" id="searchInput" class="input-control" placeholder="Search orders..." onkeyup="debounceFetch()">
+        </div>
+        <div style="width: 200px;">
+            <select id="statusFilter" class="select-control" onchange="fetchOrders()">
+                <option value="">All Statuses</option>
+                <option value="pending">Pending</option>
+                <option value="delivered">Delivered</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- Scrollable Orders Table -->
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Customer Name</th>
+                    <th>Address</th>
+                    <th>Phone</th>
+                    <th>Order Date</th>
+                    <th>Status</th>
+                    <th style="text-align: right;">Actions</th>
+                </tr>
+            </thead>
+            <tbody id="ordersTableBody"></tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Modal Form -->
+<div class="modal" id="orderModal">
+    <div class="modal-card">
+        <div class="modal-header">
+            <h2 id="modalTitle">New Delivery Order</h2>
+            <button class="btn-close" onclick="closeModal()">&times;</button>
+        </div>
+        <form id="orderForm" onsubmit="handleFormSubmit(event)">
+            <input type="hidden" id="orderId">
+            <div class="form-group">
+                <label>Customer Name</label>
+                <input type="text" id="customer_name" class="input-control" required>
+            </div>
+            <div class="form-group">
+                <label>Address</label>
+                <textarea id="address" class="input-control" rows="2" required></textarea>
+            </div>
+            <div class="form-group">
+                <label>Phone</label>
+                <input type="tel" id="phone" class="input-control" required>
+            </div>
+            <div class="form-group">
+                <label>Order Date</label>
+                <input type="date" id="delivery_date" class="input-control" required>
+            </div>
+            <div class="form-group">
+                <label>Status</label>
+                <select id="status" class="select-control">
+                    <option value="pending">Pending</option>
+                    <option value="delivered">Delivered</option>
+                </select>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-cancel" onclick="closeModal()">Cancel</button>
+                <button type="submit" class="btn">Save Order</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Watermark -->
+<div class="app-watermark">
+    <span class="dot"></span>
+    <span>Developed by <strong><a href="#" onclick="openExternalLink(event, 'https://elitefort.net')">EliteFort</a></strong> • v1.0</span>
+</div>
+
+<script>
+    const API_URL = 'api.php';
+    let debounceTimer;
+
+    // Theme Management
+    function initTheme() {
+        const savedTheme = localStorage.getItem('theme') || 'light';
+        document.documentElement.setAttribute('data-theme', savedTheme);
+        updateThemeIcon(savedTheme);
+    }
+
+    function toggleTheme() {
+        const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
+        const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+        document.documentElement.setAttribute('data-theme', newTheme);
+        localStorage.setItem('theme', newTheme);
+        updateThemeIcon(newTheme);
+    }
+
+    function updateThemeIcon(theme) {
+        document.getElementById('themeIcon').innerText = theme === 'dark' ? '☀️' : '🌙';
+    }
+
+    // App Initialization
+    document.addEventListener('DOMContentLoaded', () => {
+        initTheme();
+        fetchOrders();
+    });
+
+    function debounceFetch() {
+        clearTimeout(debounceTimer);
+        debounceTimer = setTimeout(fetchOrders, 300);
+    }
+
+    function fetchOrders() {
+        const search = encodeURIComponent(document.getElementById('searchInput').value);
+        const status = encodeURIComponent(document.getElementById('statusFilter').value);
+
+        fetch(`${API_URL}?action=read&search=${search}&status=${status}`)
+            .then(res => res.json())
+            .then(res => {
+                const tbody = document.getElementById('ordersTableBody');
+                tbody.innerHTML = '';
+                if (!res.data || res.data.length === 0) {
+                    tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: var(--text-muted); padding: 2rem;">No orders found.</td></tr>`;
+                    return;
+                }
+                res.data.forEach(order => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td style="font-weight: 600;">${escapeHtml(order.customer_name)}</td>
+                        <td>${escapeHtml(order.address)}</td>
+                        <td>${escapeHtml(order.phone)}</td>
+                        <td>${order.delivery_date}</td>
+                        <td>
+                            <button class="badge badge-${order.status}" onclick="toggleStatus(${order.id}, '${order.status}')">
+                                ${order.status}
+                            </button>
+                        </td>
+                        <td style="text-align: right;">
+                            <div class="actions">
+                                <button class="btn-action btn-edit" onclick="editOrder(${order.id})">Edit</button>
+                                <button class="btn-action btn-delete" onclick="deleteOrder(${order.id})">Delete</button>
+                            </div>
+                        </td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            })
+            .catch(err => console.error("Error fetching orders:", err));
+    }
+
+    function openModal() {
+        document.getElementById('orderForm').reset();
+        document.getElementById('orderId').value = '';
+        document.getElementById('modalTitle').innerText = 'New Delivery Order';
+        document.getElementById('orderModal').classList.add('active');
+    }
+
+    function closeModal() {
+        document.getElementById('orderModal').classList.remove('active');
+    }
+
+    function handleFormSubmit(e) {
+        e.preventDefault();
+        const id = document.getElementById('orderId').value;
+        const payload = {
+            id: id,
+            customer_name: document.getElementById('customer_name').value,
+            address: document.getElementById('address').value,
+            phone: document.getElementById('phone').value,
+            delivery_date: document.getElementById('delivery_date').value,
+            status: document.getElementById('status').value
+        };
+
+        fetch(`${API_URL}?action=${id ? 'update' : 'create'}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        })
+        .then(res => res.json())
+        .then(() => { 
+            closeModal(); 
+            fetchOrders();
+            const container = document.querySelector('.table-container');
+            if (container) container.scrollTo({ top: 0, behavior: 'smooth' });
+        })
+        .catch(err => console.error("Error saving order:", err));
+    }
+
+    function editOrder(id) {
+        fetch(`${API_URL}?action=get&id=${id}`)
+            .then(res => res.json())
+            .then(res => {
+                if (res.status === 'success') {
+                    const o = res.data;
+                    document.getElementById('orderId').value = o.id;
+                    document.getElementById('customer_name').value = o.customer_name;
+                    document.getElementById('address').value = o.address;
+                    document.getElementById('phone').value = o.phone;
+                    document.getElementById('delivery_date').value = o.delivery_date;
+                    document.getElementById('status').value = o.status;
+                    document.getElementById('modalTitle').innerText = 'Edit Order';
+                    document.getElementById('orderModal').classList.add('active');
+                }
+            });
+    }
+
+    function toggleStatus(id, currentStatus) {
+        const nextStatus = currentStatus === 'pending' ? 'delivered' : 'pending';
+        fetch(`${API_URL}?action=update_status`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id: id, status: nextStatus })
+        }).then(() => fetchOrders());
+    }
+
+    function deleteOrder(id) {
+        if (!confirm('Delete this order?')) return;
+        fetch(`${API_URL}?action=delete`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id: id })
+        }).then(() => fetchOrders());
+    }
+
+    function escapeHtml(t) {
+        return t ? t.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;") : '';
+    }
+
+    function openExternalLink(event, url) {
+        event.preventDefault();
+        window.open(url, '_blank');
+    }
+</script>
+</body>
+</html>

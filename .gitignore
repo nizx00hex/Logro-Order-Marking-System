@@ -1,0 +1,37 @@
+# Dependencies
+node_modules/
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+
+# Environment / Secrets
+.env
+.env.*
+!.env.example
+
+# Logs
+*.log
+logs/
+
+# Electron build output
+dist/
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editor settings
+.vscode/
+.idea/
+
+# Cache
+.cache/
+coverage/
